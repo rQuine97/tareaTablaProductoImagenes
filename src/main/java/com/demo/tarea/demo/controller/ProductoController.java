@@ -77,27 +77,10 @@ public class ProductoController {
         return "editar_producto";
     }
 
-//    @PostMapping("/productos")
-//    public String addProducto(@ModelAttribute("producto") Producto producto, @RequestParam("file") MultipartFile imagen){
-//        
-//        if(!imagen.isEmpty()){
-//            String ruta = "D://Imagenes-Netbeans//files1";
-//            
-//            try {
-//                byte[] bytesImg = imagen.getBytes();
-//                Path rutacompleta = Paths.get(ruta+"//"+imagen.getOriginalFilename());
-//                Files.write(rutacompleta,bytesImg);
-//                producto.setImagen(imagen.getOriginalFilename());
-//            } catch (IOException e) {
-//                System.out.println("Error: "+e);
-//            }
-//        }
-//        service.create(producto);
-//        return "redirect:/productos";
-//    }
+
     @PostMapping("/producto/{idproducto}")
     public String editProducto(@PathVariable Integer idproducto, @ModelAttribute("producto") Producto producto, @RequestParam("file") MultipartFile imagen) {
-        
+        Producto productoExistente = service.read(idproducto);
         if (!imagen.isEmpty()) {
             String ruta = "D://Imagenes-Netbeans//files1";
 
@@ -105,7 +88,7 @@ public class ProductoController {
                 byte[] bytesImg = imagen.getBytes();
                 Path rutacompleta = Paths.get(ruta + "//" + imagen.getOriginalFilename());
                 Files.write(rutacompleta, bytesImg);
-                Producto productoExistente = service.read(idproducto);
+                //Producto productoExistente = service.read(idproducto);
                
                 productoExistente.setIdproducto(idproducto);
                 productoExistente.setNombre(producto.getNombre());
@@ -118,6 +101,12 @@ public class ProductoController {
             } catch (IOException e) {
                 System.out.println("Error: " + e);
             }
+        }else {
+                productoExistente.setIdproducto(idproducto);
+                productoExistente.setNombre(producto.getNombre());
+                productoExistente.setPrecio(producto.getPrecio());
+                productoExistente.setCantidad(producto.getCantidad());
+                service.update(productoExistente);
         }
 
         return "redirect:/productos";
